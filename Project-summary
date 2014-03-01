@@ -1,0 +1,32 @@
+Team Members
+Ashwin Skantha Shanmugasundaram -ass211
+Jhanani Dhakshnamoorthy -jdt367
+
+
+
+1.Extending Queries -Completed
+  User will be able to select committee,candidate,individual and opinion data or combinations of them. The cycles are generated dynamically.
+2.Crowdsourcing opinions - Completed
+  Invite user implemented with one time link expiration.
+  User with give-opinion-data permissions will be able to assign political color to their location and will be able to see opinion markers on their map
+3.Aggregated View -Completed
+   User will be able to see the summary of committees, individuals and opinions data when selected
+
+Extra Credits
+1.Security
+Implemented user,password and Cookie encrytion using xor encryption. Encryption is done in javascript and decryption is done in perl. But due to database overload error couldn't integrate with main project and test. So we have enclosed the encryption/decryption code.
+
+2.Deeper Analysis Queries
+ Proposed additional queries for monetary side of electioneering but not implemented.(Extra-credit-Queries.txt)
+
+
+Assumptions and Comments
+In case of aggregated view, for committees, we tried the following query initially and since it took longer we changed the query by breaking it into smaller queries but still it was not faster
+The initial query was 
+eval { 
+    @rows = ExecSQL($dbuser, $dbpasswd, 
+"select sum(sum_amt) from (select sum(transaction_amnt) as sum_amt, cmte_pty_affiliation from cs339.committee_master natural join cs339.cmte_id_to_geo natural join cs339.comm_to_comm where cycle in (".join(',',@cyc).") and latitude>? and latitude<? and longitude>? and longitude<? and cmte_pty_affiliation in ('DEM','REP') group by cmte_pty_affiliation
+ union all
+ select sum(transaction_amnt) as sum_amt, cmte_pty_affiliation from cs339.committee_master natural join cs339.cmte_id_to_geo natural join cs339.comm_to_cand where cycle in (".join(',',@cyc).") and latitude>? and latitude<? and longitude>? and longitude<? and cmte_pty_affiliation in ('DEM','REP') group by cmte_pty_affiliation"
+,undef,$latsw,$latne,$longsw,$longne,$latsw,$latne,$longsw,$longne));
+  }; 

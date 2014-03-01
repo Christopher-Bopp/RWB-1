@@ -1,0 +1,54 @@
+
+1.Query to compute total amount involved by committees based on parties and city 
+select sum(sum_amt) from (select sum(transaction_amnt) as sum_amt, cmte_pty_affiliation from cs339.committee_master natural join cs339.cmte_id_to_geo natural join cs339.comm_to_comm 
+where cycle in ('1112') and cmte_pty_affiliation in ('DEM','REP') group by (cmte_pty_affiliation,cmte_city) 
+union all 
+select sum(transaction_amnt) as sum_amt, cmte_pty_affiliation from cs339.committee_master natural join cs339.cmte_id_to_geo natural join cs339.comm_to_cand 
+where cycle in ('1112') and cmte_pty_affiliation in ('DEM','REP') group by (cmte_pty_affiliation,cmte_city));
+
+2.Query to compute total amount involved by committees based on parties and state
+select sum(transaction_amnt), cmte_pty_affiliation from cs339.committee_master natural join cs339.cmte_id_to_geo natural join cs339.comm_to_comm 
+where cycle in ('1112') and cmte_pty_affiliation in ('DEM','REP') group by (cmte_pty_affiliation,cmte_st) 
+union all 
+select sum(transaction_amnt), cmte_pty_affiliation from cs339.committee_master natural join cs339.cmte_id_to_geo natural join cs339.comm_to_cand 
+where cycle in ('1112') and cmte_pty_affiliation in ('DEM','REP') group by (cmte_pty_affiliation,cmte_st);
+
+3.Query to find State that has committees which made Maximum contribution  
+Select Max(transaction_amnt),cmte_st from select sum(transaction_amnt) from cs339.committee_master natural join cs339.cmte_id_to_geo natural join cs339.comm_to_comm 
+where cycle in ('1112')  group by (cmte_st) 
+union all 
+select sum(transaction_amnt), cmte_st from cs339.committee_master natural join cs339.cmte_id_to_geo natural join cs339.comm_to_cand 
+where cycle in ('1112') group by (cmte_st);
+
+4.Query to find Committee which made a maximum contribution to a canditate
+select cmte_id,cmte_nm,name as candidate Name,Max(transaction_amnt) from cs339.committee_master natural join cs339.comm_to_cand group by cmte_id;
+
+5.Query to find Committee summary in a particular state(e.g.,IL)
+select sum(sum_amt) from (select sum(transaction_amnt) as sum_amt, cmte_pty_affiliation from cs339.committee_master natural join cs339.cmte_id_to_geo natural join cs339.comm_to_comm 
+where cycle in ('1112') and cmte_pty_affiliation in ('DEM','REP') and cmte_st='IL' group by (cmte_pty_affiliation) 
+union all 
+select sum(transaction_amnt) as sum_amt, cmte_pty_affiliation from cs339.committee_master natural join cs339.cmte_id_to_geo natural join cs339.comm_to_cand 
+where cycle in ('1112') and cmte_pty_affiliation in ('DEM','REP') and cmte_st='IL' group by (cmte_pty_affiliation));
+
+6.Query to find Individual summary in a particular state(e.g.,IL)
+select sum(transaction_amnt),cmte_pty_affiliation from cs339.individual natural join cs339.ind_to_geo natural join cs339.committee_master
+where cycle in ('1112') and cmte_pty_affiliation in ('DEM','REP') and cmte_st='IL' group by cmte_pty_affiliation;
+
+7.Query to compute total amount involved by Individual based on parties and city 
+select sum(transaction_amnt),cmte_pty_affiliation from cs339.individual natural join cs339.ind_to_geo natural join cs339.committee_master
+where cycle in ('1112') and cmte_pty_affiliation in ('DEM','REP') group by (cmte_pty_affiliation,city);
+
+8.Query to compute total amount involved by Individuals based on parties and state
+select sum(transaction_amnt),cmte_pty_affiliation from cs339.individual natural join cs339.ind_to_geo natural join cs339.committee_master
+where cycle in ('1112') and cmte_pty_affiliation in ('DEM','REP') group by (cmte_pty_affiliation,state);
+
+9.Query to find aggregated data for committees including all parties (not only DEM,REP)
+select sum(sum_amt) from (select sum(transaction_amnt) as sum_amt, cmte_pty_affiliation from cs339.committee_master natural join cs339.cmte_id_to_geo natural join cs339.comm_to_comm 
+where cycle in ('1112') and cmte_pty_affiliation is not null group by cmte_pty_affiliation
+union all 
+select sum(transaction_amnt) as sum_amt, cmte_pty_affiliation from cs339.committee_master natural join cs339.cmte_id_to_geo natural join cs339.comm_to_cand 
+where cycle in ('1112') and cmte_pty_affiliation is not nullgroup by cmte_pty_affiliation);
+
+10.Query to find aggregated data for individuals including all parties (not only DEM,REP)
+select sum(transaction_amnt),cmte_pty_affiliation from cs339.individual natural join cs339.ind_to_geo natural join cs339.committee_master
+where cycle in ('1112') and cmte_pty_affiliation is not null and cmte_st='IL' group by cmte_pty_affiliation;
