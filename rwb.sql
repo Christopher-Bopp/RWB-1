@@ -1,6 +1,6 @@
 --
 -- Part of the Red, White, and Blue example application
--- from EECS 339 at Northwestern University
+-- 
 --
 --
 -- This contains *part* of the Red, White, and Blue data
