@@ -5,7 +5,7 @@
 # rwb.pl (Red, White, and Blue)
 #
 #
-# Example code for EECS 339, Northwestern University
+# 
 #
 #
 #
